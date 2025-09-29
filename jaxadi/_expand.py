@@ -13,7 +13,7 @@ or expansions is relatively low.
 """
 
 import re
-from typing import Any
+from typing import Any, List
 
 from casadi import OP_CONST, OP_INPUT, OP_OUTPUT, OP_SQ, Function
 
@@ -30,9 +30,9 @@ class Stage:
     """
 
     def __init__(self):
-        self.output_idx: list[int] = []
-        self.work_idx: list[int] = []
-        self.ops: list[Operation] = []
+        self.output_idx: List[int] = []
+        self.work_idx: List[int] = []
+        self.ops: List[Operation] = []
 
     def codegen(self) -> str:
         """
@@ -67,7 +67,7 @@ class Operation:
     def __init__(self):
         self.op: int = None
         self.value: str = ""
-        self.work_idx: list[int] = []
+        self.work_idx: List[int] = []
         self.output_idx: Any = None
 
     def codegen(self):
@@ -98,7 +98,7 @@ class OutputOperation(Operation):
         return f"\n    outputs[{self.output_idx}] = outputs[{self.output_idx}].at[{self.exact_idx1}, {self.exact_idx2}].set({self.value})"
 
 
-def stage_generator(func: Function) -> list[Stage]:
+def stage_generator(func: Function) -> List[Stage]:
     """
     Generate stages of the computation.
 
@@ -161,7 +161,7 @@ def stage_generator(func: Function) -> list[Stage]:
     return stages
 
 
-def combine_outputs(stages: list[Stage]) -> str:
+def combine_outputs(stages: List[Stage]) -> str:
     """
     Combine all adjacent output operations
     into a single output operation over
@@ -170,7 +170,7 @@ def combine_outputs(stages: list[Stage]) -> str:
     :param stages: List of stages
     :return: A codegen string with merged outputs.
     """
-    output_groups: dict[int, list[Operation]] = {}
+    output_groups: dict[int, List[Operation]] = {}
 
     for stage in stages:
         for op in stage.ops:
@@ -198,7 +198,7 @@ def combine_outputs(stages: list[Stage]) -> str:
     return combined_command
 
 
-def recursive_subs(stages: list[Stage], idx: int) -> str:
+def recursive_subs(stages: List[Stage], idx: int) -> str:
     """
     Implementation of recursive substitution.
     Given index of the current stage, iterate
@@ -227,7 +227,7 @@ def recursive_subs(stages: list[Stage], idx: int) -> str:
     return f"({result})"
 
 
-def squeeze(stages: list[Stage]) -> str:
+def squeeze(stages: List[Stage]) -> str:
     """
     Recursively evaluate the RHS of the
     assignment to substitute it with the

@@ -3,13 +3,14 @@ This module is supposed to implement graph
 creation, traversion, code-generation and
 compression/fusion if necessary/possible
 """
+from typing import List, Dict, Tuple
 
 from casadi import OP_CONST, OP_INPUT, OP_OUTPUT, OP_SQ, Function
 
 from ._ops import OP_JAX_VALUE_DICT
 
 
-def sort_by_height(graph: list[list[int]], antigraph: list[list[int]], heights: list[int]):
+def sort_by_height(graph: List[List[int]], antigraph: List[List[int]], heights: List[int]):
     """
     Sort graph nodes by their heights.
 
@@ -26,11 +27,11 @@ def sort_by_height(graph: list[list[int]], antigraph: list[list[int]], heights: 
 
 
 def codegen(
-    graph: list[list[int]],
-    antigraph: list[list[int]],
-    heights: list[int],
-    output_map: dict[int, tuple[int, int, int]],
-    values: list[str],
+    graph: List[List[int]],
+    antigraph: List[List[int]],
+    heights: List[int],
+    output_map: Dict[int, Tuple[int, int, int]],
+    values: List[str],
 ) -> str:
     """
     Main codegeneration function.
@@ -78,7 +79,7 @@ def codegen(
     return code
 
 
-def compute_heights(func: Function, graph: list[list[int]], antigraph: list[list[int]]) -> list[int]:
+def compute_heights(func: Function, graph: List[List[int]], antigraph: List[List[int]]) -> List[int]:
     """
     Heights computation function
     based on the simple BFS.
